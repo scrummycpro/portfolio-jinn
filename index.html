@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Page</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        #enter-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #000;
+            text-transform: uppercase;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+            text-align: center;
+        }
+        #pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: repeating-linear-gradient(45deg, #e6e6e6 0, #e6e6e6 10px, #f4f4f4 10px, #f4f4f4 20px);
+        }
+        #d3-container {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            width: 200px;
+            height: 200px;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div id="pattern"></div>
+    <button id="enter-button" onclick="enterSite()">Enter Here</button>
+    <div id="d3-container"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+    <script>
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Gradient Plane
+        const geometry = new THREE.PlaneGeometry(5, 5, 32, 32);
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 1.0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float time;
+                varying vec2 vUv;
+                void main() {
+                    vec3 color = vec3(0.5 + 0.5 * sin(time + vUv.x * 3.0), 
+                                      0.5 + 0.5 * sin(time + vUv.y * 3.0), 
+                                      0.5 + 0.5 * sin(time));
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+        });
+
+        const plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+
+        camera.position.z = 5;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            material.uniforms.time.value += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resizing
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // Enter button animation using Tween.js
+        function enterSite() {
+            window.location.href = "https://code.bashninjas.com";
+        }
+
+        // D3.js visualization with moving balls
+        const svg = d3.select("#d3-container")
+            .append("svg")
+            .attr("width", 200)
+            .attr("height", 200);
+
+        const data = [10, 20, 30, 40, 50];
+        const positions = [
+            { x: 20, y: 20 },
+            { x: 180, y: 20 },
+            { x: 180, y: 180 },
+            { x: 20, y: 180 }
+        ];
+
+        const circles = svg.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("r", d => d / 2)
+            .attr("fill", "teal");
+
+        function moveBalls() {
+            circles.each(function(d, i) {
+                const circle = d3.select(this);
+                const currentIndex = i % 4;
+                const nextIndex = (i + 1) % 4;
+
+                circle.transition()
+                    .duration(2000)
+                    .attr("cx", positions[nextIndex].x)
+                    .attr("cy", positions[nextIndex].y)
+                    .on("end", moveBalls);
+            });
+        }
+
+        circles.attr("cx", (d, i) => positions[i % 4].x)
+               .attr("cy", (d, i) => positions[i % 4].y);
+
+        moveBalls();
+    </script>
+</body>
+</html>

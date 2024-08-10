@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Quality Portfolio</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .gradient-background {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(45deg, #1a237e, #ff5722);
+            background-size: 200% 200%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nav {
+            background-color: #333;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+            transition: background-color 0.5s ease;
+        }
+
+        .nav a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover {
+            background-color: #555;
+            color: #ff5722;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav a.active {
+            background-color: #ff5722;
+            color: white;
+        }
+
+        h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+        }
+
+        .button {
+            background: rgba(255, 87, 34, 0.2);
+            border: 2px solid #ff5722;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.2em;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background: #ff5722;
+            color: #121212;
+        }
+
+        .projects {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        .project {
+            background: rgba(255, 87, 34, 0.2);
+            border: 2px solid #ff5722;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.2em;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .project:hover {
+            background: #ff5722;
+            color: #121212;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            font-size: 1.2em;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .fadeIn {
+            animation: fadeIn 2s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- First Section -->
+    <div class="gradient-background">
+        <h1 class="fadeIn">Welcome to My Portfolio</h1>
+        <p class="fadeIn">Explore my projects and skills below:</p>
+        <a href="#projects" class="button fadeIn">Next Page</a>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <a href="#" class="active">Home</a>
+        <a href="#projects">Projects</a>
+        <a href="https://github.com/scrummycpro">GitHub</a>
+    </div>
+
+    <!-- Second Section -->
+    <div id="projects" class="gradient-background">
+        <h1>My Projects</h1>
+        <div class="projects">
+            <a href="https://code.bashninjas.com" class="project">Code Projects</a>
+            <a href="https://draw.bashninjas.com" class="project">Draw Projects</a>
+            <a href="https://blog.richmack.insitute.com" class="project">Blog</a>
+            <a href="https://chat.bashninjas.com" class="project">Chat App</a>
+            <a href="https://github.com/scrummycpro" class="project">GitHub</a>
+        </div>
+        <div class="explanation fadeIn">
+            <p><strong>Code Projects:</strong> A collection of programming projects, showcasing skills in various languages and frameworks.</p>
+            <p><strong>Draw Projects:</strong> A gallery of digital art and drawings, displaying creativity and design skills.</p>
+            <p><strong>Blog:</strong> A personal blog where I share insights, tutorials, and thoughts on technology and programming.</p>
+            <p><strong>Chat App:</strong> A fully functional chat application, demonstrating real-time communication features and user interface design.</p>
+            <p><strong>GitHub:</strong> Visit my GitHub profile to explore all my repositories, contributions, and collaborative projects.</p>
+        </div>
+    </div>
+
+</body>
+</html>

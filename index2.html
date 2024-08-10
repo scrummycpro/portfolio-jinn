@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Time Series with Hardcoded CSV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        svg {
+            font: 12px sans-serif;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+        .focus circle {
+            fill: steelblue;
+            r: 4;
+        }
+        .focus text {
+            font-size: 12px;
+            background-color: white;
+            stroke: white;
+            stroke-width: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <svg id="chart" width="800" height="400"></svg>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+        const width = 800 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleTime().range([0, width]);
+        const y = d3.scaleLinear().range([height, 0]);
+
+        const valueline = d3.line()
+            .x(d => x(d.date))
+            .y(d => y(d.value));
+
+        // Hardcoded CSV data
+        const csvData = `date,value
+2023-01-01,30
+2023-02-01,50
+2023-03-01,40
+2023-04-01,70
+2023-05-01,60
+2023-06-01,80
+2023-07-01,90
+2023-08-01,100`;
+
+        function parseCSVData(rawData) {
+            const parseTime = d3.timeParse("%Y-%m-%d");
+            const data = d3.csvParse(rawData, d => ({
+                date: parseTime(d.date),
+                value: +d.value
+            }));
+            updateChart(data);
+        }
+
+        function updateChart(data) {
+            svg.selectAll("*").remove(); // Clear the previous chart content
+
+            x.domain(d3.extent(data, d => d.date));
+            y.domain([0, d3.max(data, d => d.value)]);
+
+            // Append the path for the line
+            const path = svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", valueline);
+
+            // Append the X Axis
+            const xAxis = svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+
+            // Append the Y Axis
+            const yAxis = svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Define the zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([1, 10]) // Zoom scale
+                .translateExtent([[-100, -100], [width + 100, height + 100]]) // Pan limits
+                .on("zoom", zoomed);
+
+            svg.call(zoom);
+
+            function zoomed(event) {
+                const new_x = event.transform.rescaleX(x);
+                const new_y = event.transform.rescaleY(y);
+
+                xAxis.call(d3.axisBottom(new_x));
+                yAxis.call(d3.axisLeft(new_y));
+
+                path.attr("d", valueline.x(d => new_x(d.date)).y(d => new_y(d.value)));
+            }
+        }
+
+        // Parse and display the hardcoded CSV data
+        parseCSVData(csvData);
+    </script>
+</body>
+</html>
